@@ -24,13 +24,21 @@ addBtn.addEventListener("click", function() {
 function renderExpenses() {
     expenseList.innerHTML = "";
 
-    expenses.forEach(function (expense) {
+    expenses.forEach(function (expense, index) {
         const li = document.createElement("li");
+        li.classList.add("expense-item");
 
-        li.textContent = `${expense.name} - $${expense.amount} (${expense.category})`;
+        li.innerHTML = 
+            `<span>
+                ${expense.name} - $${expense.amount} (${expense.category})
+            </span>
+            
+            <button class="delete-btn" data-index="${index}">X</button>`
 
         expenseList.appendChild(li)
     });
+
+    addDeleteEvents();
 }
 
 function updateTotal() {
@@ -39,4 +47,19 @@ function updateTotal() {
     }, 0);
 
     totalDisplay.textContent = total;
+}
+
+function addDeleteEvents() {
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+
+    deleteButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const index = button.dataset.index;
+
+            expenses.splice(index, 1);
+
+            renderExpenses();
+            updateTotal();
+        });
+    });
 }
