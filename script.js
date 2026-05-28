@@ -41,8 +41,11 @@ function renderExpenses() {
             `<span>
                 ${expense.name} - $${expense.amount} (${expense.category})
             </span>
-            
-            <button class="delete-btn" data-index="${index}">X</button>`
+            <div class="button-group">
+                <button class="edit-btn" data-index=${index}">Edit</button>
+
+                <button class="delete-btn" data-index="${index}">X</button>
+            </div>`
 
         expenseList.appendChild(li)
     });

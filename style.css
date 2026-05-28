@@ -64,15 +64,35 @@ button {
     display:flex;
     justify-content: center;
     align-items: center;
-
-    opacity: 0;
-    transition: opacity 0.4s ease;
 }
 
-.expense-item:hover .delete-btn {
-    opacity: 1;
-}
 
 .delete-btn:hover {
     opacity: 0.7;
+}
+
+.button-group {
+    display:flex;
+    gap: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease;
+}
+
+.edit-btn {
+    background: #4a90e2;
+    color:white;
+    border:none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-btn:hover {
+    opacity: 0.7;
+}
+
+.expense-item:hover .button-group {
+    opacity: 1;
+    visibility: visible;
 }
