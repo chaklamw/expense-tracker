@@ -8,10 +8,19 @@ const totalDisplay = document.getElementById("total");
 let expenses = [];
 
 addBtn.addEventListener("click", function() {
+    const name = expenseName.value.trim();
+    const amount = Number(expenseAmount.value);
+    const category = expenseCategory.value;
+
+    if (name === "" || amount <= 0 || category === "") {
+        alert("Please fill out all fields correctly.");
+        return;
+    }
+
     const expense = {
-        name: expenseName.value,
-        amount: Number(expenseAmount.value),
-        category: expenseCategory.value
+        name: name,
+        amount: amount,
+        category: category
     };
 
     expenses.push(expense)
@@ -47,6 +56,10 @@ function updateTotal() {
     }, 0);
 
     totalDisplay.textContent = total;
+
+    expenseAmount.value = "";
+    expenseCategory.value = "";
+    expenseName.value = "";
 }
 
 function addDeleteEvents() {
