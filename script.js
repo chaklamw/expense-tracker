@@ -56,12 +56,10 @@ function renderExpenses() {
                 <button class="edit-btn" data-index="${index}">EDIT</button>
 
                 <button class="delete-btn" data-index="${index}">X</button>
-            </div>`
+            </div>`;
 
-        expenseList.appendChild(li)
+        expenseList.appendChild(li);
     });
-
-    addDeleteEvents();
 }
 
 function updateTotal() {
