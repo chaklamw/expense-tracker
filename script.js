@@ -76,25 +76,17 @@ function updateTotal() {
     expenseName.value = "";
 }
 
-function addDeleteEvents() {
-    const deleteButtons = document.querySelectorAll(".delete-btn");
-
-    deleteButtons.forEach(function (button) {
-        button.addEventListener("click", function () {
-            const index = button.dataset.index;
-
-            expenses.splice(index, 1);
-
-            renderExpenses();
-            updateTotal();
-        });
-    });
-}
-
 expenseList.addEventListener("click", function (event) {
+    const index = event.target.dataset.index;
+
+    if (event.target.classList.contains("delete-btn")) {
+        expenses.splice(index, 1);
+
+        renderExpenses();
+        updateTotal();
+    }
 
     if (event.target.classList.contains("edit-btn")) {
-        const index = event.target.dataset.index;
         const expense = expenses[index];
 
         expenseName.value = expense.name;
