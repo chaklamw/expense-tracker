@@ -7,6 +7,8 @@ const totalDisplay = document.getElementById("total");
 
 let expenses = [];
 
+let editIndex = null;
+
 addBtn.addEventListener("click", function() {
     const name = expenseName.value.trim();
     const amount = Number(expenseAmount.value);
@@ -23,11 +25,20 @@ addBtn.addEventListener("click", function() {
         category: category
     };
 
-    expenses.push(expense)
+    if (editIndex !== null) {
+        expenses[editIndex] = expense;
+        editIndex = null;
+        addBtn.textContent = "Add Expense";
+    } else {
+        expenses.push(expense)
+    }
 
     renderExpenses();
-    
     updateTotal();
+
+    expenseName.value = "";
+    expenseAmount.value = "";
+    expenseCategory.value = "";
 });
 
 function renderExpenses() {
@@ -42,7 +53,7 @@ function renderExpenses() {
                 ${expense.name} - $${expense.amount} (${expense.category})
             </span>
             <div class="button-group">
-                <button class="edit-btn" data-index=${index}">Edit</button>
+                <button class="edit-btn" data-index="${index}">EDIT</button>
 
                 <button class="delete-btn" data-index="${index}">X</button>
             </div>`
@@ -79,3 +90,20 @@ function addDeleteEvents() {
         });
     });
 }
+
+expenseList.addEventListener("click", function (event) {
+
+    if (event.target.classList.contains("edit-btn")) {
+        const index = event.target.dataset.index;
+        const expense = expenses[index];
+
+        expenseName.value = expense.name;
+        expenseAmount.value = expense.amount;
+        expenseCategory.value = expense.category;
+
+        editIndex = index;
+
+        addBtn.textContent = "Save Changes";
+    }
+
+});
