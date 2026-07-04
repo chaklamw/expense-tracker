@@ -45,8 +45,14 @@ function renderExpenses() {
     expenseList.innerHTML = "";
 
     expenses.forEach(function (expense, index) {
+        const isEditing = index == editIndex; // boolean
+
         const li = document.createElement("li");
         li.classList.add("expense-item");
+
+        if (isEditing) {
+            li.classList.add("editing");
+        }
 
         li.innerHTML = 
             `<span>
@@ -94,6 +100,8 @@ expenseList.addEventListener("click", function (event) {
         editIndex = index;
 
         addBtn.textContent = "Save Changes";
+
+        renderExpenses();
     }
 
 });

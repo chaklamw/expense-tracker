@@ -96,3 +96,8 @@ button {
     opacity: 1;
     visibility: visible;
 }
+
+.editing {
+    border: 2px solid #4a90e2;
+    background: #eef6ff;
+}
