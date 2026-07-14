@@ -1,3 +1,4 @@
+// Elements
 const expenseName = document.getElementById("expense-name");
 const expenseAmount = document.getElementById("expense-amount");
 const expenseCategory = document.getElementById("expense-category");
@@ -6,10 +7,11 @@ const cancelBtn = document.getElementById("cancel-btn");
 const expenseList = document.getElementById("expense-list");
 const totalDisplay = document.getElementById("total");
 
+// App State
 let expenses = [];
-
 let editIndex = null;
 
+// Event Listeners
 addBtn.addEventListener("click", function() {
     const name = expenseName.value.trim();
     const amount = Number(expenseAmount.value);
@@ -37,11 +39,54 @@ addBtn.addEventListener("click", function() {
 
     renderExpenses();
     updateTotal();
+    clearForm();
+});
 
+expenseList.addEventListener("click", function (event) {
+    const index = event.target.dataset.index;
+
+    if (event.target.classList.contains("delete-btn")) {
+        expenses.splice(index, 1);
+
+        renderExpenses();
+        updateTotal();
+    }
+
+    if (event.target.classList.contains("edit-btn")) {
+        const expense = expenses[index];
+
+        expenseName.value = expense.name;
+        expenseAmount.value = expense.amount;
+        expenseCategory.value = expense.category;
+
+        editIndex = index;
+        addBtn.textContent = "Save Changes";
+
+        cancelBtn.hidden = false;
+
+        renderExpenses();
+    }
+
+});
+
+cancelBtn.addEventListener("click", function () {
+
+    editIndex = null;
+
+    clearForm();
+
+    addBtn.textContent = "Add Expense";
+    cancelBtn.hidden = true;
+
+    renderExpenses();
+});
+
+// Rendering
+function clearForm() {
     expenseName.value = "";
     expenseAmount.value = "";
     expenseCategory.value = "";
-});
+}
 
 function renderExpenses() {
     expenseList.innerHTML = "";
@@ -75,50 +120,5 @@ function updateTotal() {
         return sum + expense.amount
     }, 0);
 
-    totalDisplay.textContent = total;
-
-    expenseAmount.value = "";
-    expenseCategory.value = "";
-    expenseName.value = "";
+    totalDisplay.textContent = `${total.toFixed(2)}`;
 }
-
-expenseList.addEventListener("click", function (event) {
-    const index = event.target.dataset.index;
-
-    if (event.target.classList.contains("delete-btn")) {
-        expenses.splice(index, 1);
-
-        renderExpenses();
-        updateTotal();
-    }
-
-    if (event.target.classList.contains("edit-btn")) {
-        const expense = expenses[index];
-
-        expenseName.value = expense.name;
-        expenseAmount.value = expense.amount;
-        expenseCategory.value = expense.category;
-
-        editIndex = index;
-        addBtn.textContent = "Save Changes";
-
-        cancelBtn.hidden = false;
-
-        renderExpenses();
-    }
-
-});
-
-cancelBtn.addEventListener("click", function () {
-
-    editIndex = null;
-
-    expenseName.value = "";
-    expenseAmount.value = "";
-    expenseCategory.value = "";
-
-    addBtn.textContent = "Add Expense";
-    cancelBtn.hidden = true;
-
-    renderExpenses();
-});
