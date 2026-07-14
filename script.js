@@ -2,6 +2,7 @@ const expenseName = document.getElementById("expense-name");
 const expenseAmount = document.getElementById("expense-amount");
 const expenseCategory = document.getElementById("expense-category");
 const addBtn = document.getElementById("add-btn");
+const cancelBtn = document.getElementById("cancel-btn");
 const expenseList = document.getElementById("expense-list");
 const totalDisplay = document.getElementById("total");
 
@@ -29,6 +30,7 @@ addBtn.addEventListener("click", function() {
         expenses[editIndex] = expense;
         editIndex = null;
         addBtn.textContent = "Add Expense";
+        cancelBtn.hidden = true;
     } else {
         expenses.push(expense)
     }
@@ -98,10 +100,25 @@ expenseList.addEventListener("click", function (event) {
         expenseCategory.value = expense.category;
 
         editIndex = index;
-
         addBtn.textContent = "Save Changes";
+
+        cancelBtn.hidden = false;
 
         renderExpenses();
     }
 
+});
+
+cancelBtn.addEventListener("click", function () {
+
+    editIndex = null;
+
+    expenseName.value = "";
+    expenseAmount.value = "";
+    expenseCategory.value = "";
+
+    addBtn.textContent = "Add Expense";
+    cancelBtn.hidden = true;
+
+    renderExpenses();
 });
