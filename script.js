@@ -30,9 +30,11 @@ addBtn.addEventListener("click", function() {
 
     if (editIndex !== null) {
         expenses[editIndex] = expense;
+        saveExpenses();
         exitEditMode();
     } else {
         expenses.push(expense)
+        saveExpenses();
     }
 
     refresh();
@@ -44,6 +46,7 @@ expenseList.addEventListener("click", function (event) {
 
     if (event.target.classList.contains("delete-btn")) {
         expenses.splice(index, 1);
+        saveExpenses();
 
         refresh();
     }
@@ -81,6 +84,18 @@ function exitEditMode() {
     cancelBtn.hidden = true;
 }
 
+// Storage
+function saveExpenses() {
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+}
+
+function loadExpenses() {
+    const savedExpenses = localStorage.getItem("expenses");
+
+    if (savedExpenses) {
+        expenses = JSON.parse(savedExpenses);
+    }
+}
 
 // Rendering
 function clearForm() {
@@ -128,3 +143,6 @@ function refresh() {
     renderExpenses();
     updateTotal();
 }
+
+loadExpenses();
+refresh();
