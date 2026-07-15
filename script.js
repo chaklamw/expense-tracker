@@ -30,15 +30,12 @@ addBtn.addEventListener("click", function() {
 
     if (editIndex !== null) {
         expenses[editIndex] = expense;
-        editIndex = null;
-        addBtn.textContent = "Add Expense";
-        cancelBtn.hidden = true;
+        exitEditMode();
     } else {
         expenses.push(expense)
     }
 
-    renderExpenses();
-    updateTotal();
+    refresh();
     clearForm();
 });
 
@@ -48,8 +45,7 @@ expenseList.addEventListener("click", function (event) {
     if (event.target.classList.contains("delete-btn")) {
         expenses.splice(index, 1);
 
-        renderExpenses();
-        updateTotal();
+        refresh();
     }
 
     if (event.target.classList.contains("edit-btn")) {
@@ -59,10 +55,7 @@ expenseList.addEventListener("click", function (event) {
         expenseAmount.value = expense.amount;
         expenseCategory.value = expense.category;
 
-        editIndex = index;
-        addBtn.textContent = "Save Changes";
-
-        cancelBtn.hidden = false;
+        enterEditMode(index);
 
         renderExpenses();
     }
@@ -70,16 +63,24 @@ expenseList.addEventListener("click", function (event) {
 });
 
 cancelBtn.addEventListener("click", function () {
-
-    editIndex = null;
-
     clearForm();
-
-    addBtn.textContent = "Add Expense";
-    cancelBtn.hidden = true;
-
+    exitEditMode();
     renderExpenses();
 });
+
+// Editing
+function enterEditMode(index) {
+    editIndex = index;
+    addBtn.textContent = "Save Changes";
+    cancelBtn.hidden = false;
+}
+
+function exitEditMode() {
+    editIndex = null;
+    addBtn.textContent = "Add Expense";
+    cancelBtn.hidden = true;
+}
+
 
 // Rendering
 function clearForm() {
@@ -121,4 +122,9 @@ function updateTotal() {
     }, 0);
 
     totalDisplay.textContent = `${total.toFixed(2)}`;
+}
+
+function refresh() {
+    renderExpenses();
+    updateTotal();
 }
