@@ -6,6 +6,8 @@ const addBtn = document.getElementById("add-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 const expenseList = document.getElementById("expense-list");
 const totalDisplay = document.getElementById("total");
+const sortBy = document.getElementById("sort-by");
+const filterCategory = document.getElementById("filter-category");
 
 // App State
 let expenses = [];
@@ -72,6 +74,16 @@ cancelBtn.addEventListener("click", function () {
     renderExpenses();
 });
 
+filterCategory.addEventListener("change", function() {
+    renderExpenses();
+    updateTotal();
+});
+
+sortBy.addEventListener("change", function() {
+    renderExpenses();
+    updateTotal();
+});
+
 // Editing
 function enterEditMode(index) {
     editIndex = index;
@@ -83,6 +95,21 @@ function exitEditMode() {
     editIndex = null;
     addBtn.textContent = "Add Expense";
     cancelBtn.hidden = true;
+}
+
+// Processing
+function getDisplayedExpenses() {
+    let displayedExpenses = [...expenses];
+
+    const category = filterCategory.value;
+
+    if (category !== "all") {
+        displayedExpenses = displayedExpenses.filter(function (expense) {
+            return expense.category === category;
+        })
+    }
+
+    return displayedExpenses;
 }
 
 // Storage
@@ -108,7 +135,9 @@ function clearForm() {
 function renderExpenses() {
     expenseList.innerHTML = "";
 
-    expenses.forEach(function (expense, index) {
+    const displayedExpenses = getDisplayedExpenses();
+
+    displayedExpenses.forEach(function (expense, index) {
         const isEditing = index == editIndex; // boolean
 
         const li = document.createElement("li");
@@ -133,7 +162,9 @@ function renderExpenses() {
 }
 
 function updateTotal() {
-    const total = expenses.reduce(function (sum, expense) {
+    const displayedExpenses = getDisplayedExpenses();
+
+    const total = displayedExpenses.reduce(function (sum, expense) {
         return sum + expense.amount
     }, 0);
 
