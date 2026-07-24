@@ -25,7 +25,8 @@ addBtn.addEventListener("click", function() {
     const expense = {
         name: name,
         amount: amount,
-        category: category
+        category: category,
+        createdAt: Date.now()
     };
 
     if (editIndex !== null) {

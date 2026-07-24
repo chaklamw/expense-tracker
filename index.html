@@ -33,6 +33,31 @@
 
         <h2>Total: $<span id="total">0</span></h2>
 
+        <div class="control-row">
+            <div class="control-group">
+                <label for="sort-by">Sort By: </label>
+                <select id="sort-by">
+                    <option value="Newest">Newest</option>
+                    <option value="Oldest">Oldest</option>
+                    <option value="A-Z">A-Z</option>
+                    <option value="Z-A">Z-At</option>
+                    <option value="Highest">Highest</option>
+                    <option value="Lowest">Lowest</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="filter-category">Filter: </label>
+                <select id="filter-category">
+                    <option value="All">All</option>
+                    <option value="Food">Food</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Bills">Bills</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
         <ul id="expense-list"></ul>
     </div>
     
