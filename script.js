@@ -144,6 +144,22 @@ function getDisplayedExpenses() {
         displayedExpenses.sort(function (a, b) {
             return a.createdAt - b.createdAt;
         });
+    } else if (sort === "a-z") {
+        displayedExpenses.sort(function (a,b) {
+            return a.name.localeCompare(b.name);
+        });
+    } else if (sort === "z-a") {
+        displayedExpenses.sort(function (a,b) {
+            return b.name.localeCompare(a.name);
+        });
+    } else if (sort === "highest") {
+        displayedExpenses.sort(function (a,b) {
+            return b.amount - a.amount;
+        });
+    } else if (sort === "lowest") {
+        displayedExpenses.sort(function (a,b) {
+            return a.amount - b.amount;
+        });
     }
 
     return displayedExpenses;
