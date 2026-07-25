@@ -11,7 +11,7 @@ const filterCategory = document.getElementById("filter-category");
 
 // App State
 let expenses = [];
-let editIndex = null;
+let editId = null;
 
 // Event Listeners
 addBtn.addEventListener("click", function() {
@@ -24,18 +24,37 @@ addBtn.addEventListener("click", function() {
         return;
     }
 
-    const expense = {
-        name: name,
-        amount: amount,
-        category: category,
-        createdAt: Date.now()
-    };
+    let expense;
 
-    if (editIndex !== null) {
-        expenses[editIndex] = expense;
+    if (editId !== null) {
+        const expenseToEdit = expenses.find(function (expense) {
+            return expense.id === editId;
+        });
+
+        expense = {
+            id: editId,
+            name,
+            amount,
+            category,
+            createdAt: expenseToEdit.createdAt
+        };
+        
+        const index = expenses.findIndex(function (expense) {
+            return expense.id === editId;
+        });
+
+        expenses[index] = expense;
+
         saveExpenses();
         exitEditMode();
     } else {
+        expense = {
+            id: crypto.randomUUID(),
+            name: name,
+            amount: amount,
+            category: category,
+            createdAt: Date.now()
+        };
         expenses.push(expense)
         saveExpenses();
     }
@@ -45,23 +64,29 @@ addBtn.addEventListener("click", function() {
 });
 
 expenseList.addEventListener("click", function (event) {
-    const index = event.target.dataset.index;
+    const id = event.target.dataset.id
 
     if (event.target.classList.contains("delete-btn")) {
-        expenses.splice(index, 1);
+        expenses = expenses.filter(function (expense) {
+            return expense.id !== id;
+        });
+
+
         saveExpenses();
 
         refresh();
     }
 
     if (event.target.classList.contains("edit-btn")) {
-        const expense = expenses[index];
+        const expense = expenses.find(function (expense) {
+            return expense.id === id;
+        });
 
         expenseName.value = expense.name;
         expenseAmount.value = expense.amount;
         expenseCategory.value = expense.category;
 
-        enterEditMode(index);
+        enterEditMode(id);
 
         renderExpenses();
     }
@@ -85,14 +110,14 @@ sortBy.addEventListener("change", function() {
 });
 
 // Editing
-function enterEditMode(index) {
-    editIndex = index;
+function enterEditMode(id) {
+    editId = id;
     addBtn.textContent = "Save Changes";
     cancelBtn.hidden = false;
 }
 
 function exitEditMode() {
-    editIndex = null;
+    editId = null;
     addBtn.textContent = "Add Expense";
     cancelBtn.hidden = true;
 }
@@ -137,8 +162,8 @@ function renderExpenses() {
 
     const displayedExpenses = getDisplayedExpenses();
 
-    displayedExpenses.forEach(function (expense, index) {
-        const isEditing = index == editIndex; // boolean
+    displayedExpenses.forEach(function (expense) {
+        const isEditing = expense.id === editId; // boolean
 
         const li = document.createElement("li");
         li.classList.add("expense-item");
@@ -147,14 +172,16 @@ function renderExpenses() {
             li.classList.add("editing");
         }
 
+        const displayCategory = expense.category.charAt(0).toUpperCase() + expense.category.slice(1);
+
         li.innerHTML = 
             `<span>
-                ${expense.name} - $${expense.amount} (${expense.category})
+                ${expense.name} - $${expense.amount} (${displayCategory})
             </span>
             <div class="button-group">
-                <button class="edit-btn" data-index="${index}">EDIT</button>
+                <button class="edit-btn" data-id="${expense.id}"">EDIT</button>
 
-                <button class="delete-btn" data-index="${index}">X</button>
+                <button class="delete-btn" data-id="${expense.id}">X</button>
             </div>`;
 
         expenseList.appendChild(li);
