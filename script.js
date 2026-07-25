@@ -134,6 +134,18 @@ function getDisplayedExpenses() {
         })
     }
 
+    const sort = sortBy.value;
+
+    if (sort === "newest") {
+        displayedExpenses.sort(function (a,b) {
+            return b.createdAt - a.createdAt;
+        });
+    } else if (sort === "oldest") {
+        displayedExpenses.sort(function (a, b) {
+            return a.createdAt - b.createdAt;
+        });
+    }
+
     return displayedExpenses;
 }
 
