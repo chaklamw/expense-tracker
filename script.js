@@ -88,7 +88,7 @@ expenseList.addEventListener("click", function (event) {
 
         enterEditMode(id);
 
-        renderExpenses();
+        refresh();
     }
 
 });
@@ -96,18 +96,12 @@ expenseList.addEventListener("click", function (event) {
 cancelBtn.addEventListener("click", function () {
     clearForm();
     exitEditMode();
-    renderExpenses();
+    refresh();
 });
 
-filterCategory.addEventListener("change", function() {
-    renderExpenses();
-    updateTotal();
-});
+filterCategory.addEventListener("change", refresh);
 
-sortBy.addEventListener("change", function() {
-    renderExpenses();
-    updateTotal();
-});
+sortBy.addEventListener("change", refresh);
 
 // Editing
 function enterEditMode(id) {
@@ -207,7 +201,7 @@ function renderExpenses() {
                 ${expense.name} - $${expense.amount} (${displayCategory})
             </span>
             <div class="button-group">
-                <button class="edit-btn" data-id="${expense.id}"">EDIT</button>
+                <button class="edit-btn" data-id="${expense.id}">EDIT</button>
 
                 <button class="delete-btn" data-id="${expense.id}">X</button>
             </div>`;
