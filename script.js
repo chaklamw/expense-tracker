@@ -24,8 +24,6 @@ addBtn.addEventListener("click", async function() {
         return;
     }
 
-    let expense;
-
     if (editId !== null) {
         const { error } = await supabaseClient
             .from("expenses")
