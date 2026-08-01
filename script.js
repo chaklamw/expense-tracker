@@ -65,18 +65,20 @@ addBtn.addEventListener("click", async function() {
     clearForm();
 });
 
-expenseList.addEventListener("click", function (event) {
+expenseList.addEventListener("click", async function (event) {
     const id = event.target.dataset.id
 
     if (event.target.classList.contains("delete-btn")) {
-        expenses = expenses.filter(function (expense) {
-            return expense.id !== id;
-        });
+        const { error } = await supabaseClient
+            .from("expenses")
+            .delete()
+            .eq("id", id);
 
+        if (error) {
+            console.error("Error deleting expense:", error);
+        }
 
-        saveExpenses();
-
-        refresh();
+        await loadExpenses();
     }
 
     if (event.target.classList.contains("edit-btn")) {
@@ -89,10 +91,8 @@ expenseList.addEventListener("click", function (event) {
         expenseCategory.value = expense.category;
 
         enterEditMode(id);
-
-        refresh();
     }
-
+    refresh();
 });
 
 cancelBtn.addEventListener("click", function () {
