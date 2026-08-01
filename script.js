@@ -164,12 +164,25 @@ function saveExpenses() {
     localStorage.setItem("expenses", JSON.stringify(expenses));
 }
 
-function loadExpenses() {
-    const savedExpenses = localStorage.getItem("expenses");
+async function loadExpenses() {
+    const { data, error } = await supabaseClient
+        .from("expenses")
+        .select("*");
 
-    if (savedExpenses) {
-        expenses = JSON.parse(savedExpenses);
+    if (error) {
+        console.error("Error loading expenses:", error);
+        return;
     }
+
+    expenses = data.map(function (expense) {
+        return {
+            id: expense.id,
+            name: expense.name,
+            amount: expense.amount,
+            category: expense.category,
+            createdAt: expense.created_at
+        };
+    });
 }
 
 // Rendering
@@ -225,16 +238,9 @@ function refresh() {
     updateTotal();
 }
 
-loadExpenses();
-refresh();
-
-async function testConnection() {
-    const { data, error } = await supabaseClient
-        .from("expenses")
-        .select("*");
-
-    console.log("Data:", data);
-    console.log("Error:", error);
+async function startApp() {
+    await loadExpenses();
+    refresh();
 }
 
-testConnection();
+startApp();
