@@ -14,7 +14,7 @@ let expenses = [];
 let editId = null;
 
 // Event Listeners
-addBtn.addEventListener("click", function() {
+addBtn.addEventListener("click", async function() {
     const name = expenseName.value.trim();
     const amount = Number(expenseAmount.value);
     const category = expenseCategory.value;
@@ -27,36 +27,40 @@ addBtn.addEventListener("click", function() {
     let expense;
 
     if (editId !== null) {
-        const expenseToEdit = expenses.find(function (expense) {
-            return expense.id === editId;
-        });
+        const { error } = await supabaseClient
+            .from("expenses")
+            .update({
+                name,
+                amount,
+                category
+            })
+            .eq("id", editId);
 
-        expense = {
-            id: editId,
-            name,
-            amount,
-            category,
-            createdAt: expenseToEdit.createdAt
-        };
+        if (error) {
+            console.error("Error updating expense:", error);
+            return;
+        }
         
-        const index = expenses.findIndex(function (expense) {
-            return expense.id === editId;
-        });
-
-        expenses[index] = expense;
-
-        saveExpenses();
+        await loadExpenses();
         exitEditMode();
     } else {
-        expense = {
-            id: crypto.randomUUID(),
-            name: name,
-            amount: amount,
-            category: category,
-            createdAt: Date.now()
-        };
-        expenses.push(expense)
-        saveExpenses();
+        const { data, error } = await supabaseClient
+            .from("expenses")
+            .insert([
+                {
+                    name: name,
+                    amount: amount,
+                    category: category,
+                }
+            
+            ]);
+
+        if (error) {
+            console.error("Error adding expense:", error);
+            return;
+        }
+
+        await loadExpenses();
     }
 
     refresh();
