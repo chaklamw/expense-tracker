@@ -227,3 +227,14 @@ function refresh() {
 
 loadExpenses();
 refresh();
+
+async function testConnection() {
+    const { data, error } = await supabaseClient
+        .from("expenses")
+        .select("*");
+
+    console.log("Data:", data);
+    console.log("Error:", error);
+}
+
+testConnection();
