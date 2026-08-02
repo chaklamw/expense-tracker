@@ -8,6 +8,7 @@ const expenseList = document.getElementById("expense-list");
 const totalDisplay = document.getElementById("total");
 const sortBy = document.getElementById("sort-by");
 const filterCategory = document.getElementById("filter-category");
+const signInBtn = document.getElementById("sign-in-btn"); 
 
 // App State
 let expenses = [];
@@ -108,6 +109,16 @@ cancelBtn.addEventListener("click", function () {
 filterCategory.addEventListener("change", refresh);
 
 sortBy.addEventListener("change", refresh);
+
+signInBtn.addEventListener("click", async function () {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: "google"
+    });
+
+    if (error) {
+        console.error("Error signing in:", error);
+    }
+});
 
 // Editing
 function enterEditMode(id) {
@@ -240,7 +251,19 @@ function refresh() {
     updateTotal();
 }
 
+// Authentication
+async function checkAuth() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (user) {
+        console.log("Logged in:", user);
+    } else {
+        console.log("Not logged in")
+    }
+}
+
 async function startApp() {
+    await checkAuth();
     await loadExpenses();
     refresh();
 }
