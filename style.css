@@ -128,3 +128,16 @@ button {
     align-items: center;
     gap:8px;
 }
+
+#auth-container {
+    position:absolute;
+    top:20px;
+    right:20px;
+}
+
+#sign-in-btn {
+    border-radius: 5px;
+    border: none;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
