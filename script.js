@@ -8,7 +8,8 @@ const expenseList = document.getElementById("expense-list");
 const totalDisplay = document.getElementById("total");
 const sortBy = document.getElementById("sort-by");
 const filterCategory = document.getElementById("filter-category");
-const signInBtn = document.getElementById("sign-in-btn"); 
+const authBtn = document.getElementById("auth-btn"); 
+const userName = document.getElementById("user-name")
 
 // App State
 let expenses = [];
@@ -110,14 +111,8 @@ filterCategory.addEventListener("change", refresh);
 
 sortBy.addEventListener("change", refresh);
 
-signInBtn.addEventListener("click", async function () {
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: "google"
-    });
-
-    if (error) {
-        console.error("Error signing in:", error);
-    }
+supabaseClient.auth.onAuthStateChange((event, session) => {
+    updateAuthUI(session?.user ?? null);
 });
 
 // Editing
@@ -251,14 +246,46 @@ function refresh() {
     updateTotal();
 }
 
+function updateAuthUI(user) {
+    if (user) {
+        userName.textContent = "Welcome " + user.user_metadata.full_name + "!";
+        authBtn.textContent = "Sign Out";
+        authBtn.onclick = signOut;
+    } else {
+        userName.textContent = "";
+        authBtn.textContent = "Sign in with Google"
+        authBtn.onclick = signIn;
+    }
+}
+
 // Authentication
 async function checkAuth() {
     const { data: { user } } = await supabaseClient.auth.getUser();
 
     if (user) {
         console.log("Logged in:", user);
+        updateAuthUI(user);
     } else {
         console.log("Not logged in")
+        updateAuthUI(null);
+    }
+}
+
+async function signIn() {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: "google"
+    });
+
+    if (error) {
+        console.error("Error signing in:", error);
+    }
+}
+
+async function signOut() {
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+        console.error(error);
     }
 }
 
