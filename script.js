@@ -86,6 +86,10 @@ expenseList.addEventListener("click", async function (event) {
             return expense.id === id;
         });
 
+        if (!expense) {
+            return;
+        }
+
         expenseName.value = expense.name;
         expenseAmount.value = expense.amount;
         expenseCategory.value = expense.category;
@@ -162,10 +166,6 @@ function getDisplayedExpenses() {
 }
 
 // Storage
-function saveExpenses() {
-    localStorage.setItem("expenses", JSON.stringify(expenses));
-}
-
 async function loadExpenses() {
     const { data, error } = await supabaseClient
         .from("expenses")
@@ -182,7 +182,7 @@ async function loadExpenses() {
             name: expense.name,
             amount: expense.amount,
             category: expense.category,
-            createdAt: expense.created_at
+            createdAt: new Date(expense.created_at).getTime()
         };
     });
 }
