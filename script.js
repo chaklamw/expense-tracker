@@ -44,13 +44,16 @@ addBtn.addEventListener("click", async function() {
         await loadExpenses();
         exitEditMode();
     } else {
-        const { data, error } = await supabaseClient
+        const { data: { user } } = await supabaseClient.auth.getUser();
+
+        const { error } = await supabaseClient
             .from("expenses")
             .insert([
                 {
-                    name: name,
-                    amount: amount,
-                    category: category,
+                    name,
+                    amount,
+                    category,
+                    user_id: user.id
                 }
             
             ]);
@@ -111,8 +114,11 @@ filterCategory.addEventListener("change", refresh);
 
 sortBy.addEventListener("change", refresh);
 
-supabaseClient.auth.onAuthStateChange((event, session) => {
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
     updateAuthUI(session?.user ?? null);
+
+    await loadExpenses();
+    refresh();
 });
 
 // Editing
@@ -173,9 +179,17 @@ function getDisplayedExpenses() {
 
 // Storage
 async function loadExpenses() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        expenses = [];
+        return;
+    }
+
     const { data, error } = await supabaseClient
         .from("expenses")
-        .select("*");
+        .select("*")
+        .eq("user_id", user.id);
 
     if (error) {
         console.error("Error loading expenses:", error);
@@ -252,25 +266,15 @@ function updateAuthUI(user) {
         authBtn.textContent = "Sign Out";
         authBtn.onclick = signOut;
     } else {
-        userName.textContent = "";
+        userName.textContent = "You are on Demo Mode!";
         authBtn.textContent = "Sign in with Google"
         authBtn.onclick = signIn;
+        exitEditMode();
+        clearForm();
     }
 }
 
 // Authentication
-async function checkAuth() {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-
-    if (user) {
-        console.log("Logged in:", user);
-        updateAuthUI(user);
-    } else {
-        console.log("Not logged in")
-        updateAuthUI(null);
-    }
-}
-
 async function signIn() {
     const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: "google"
@@ -290,7 +294,10 @@ async function signOut() {
 }
 
 async function startApp() {
-    await checkAuth();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    updateAuthUI(user);
+
     await loadExpenses();
     refresh();
 }
