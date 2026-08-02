@@ -14,6 +14,7 @@ const userName = document.getElementById("user-name")
 // App State
 let expenses = [];
 let editId = null;
+let currentUser = null;
 
 // Event Listeners
 addBtn.addEventListener("click", async function() {
@@ -34,7 +35,8 @@ addBtn.addEventListener("click", async function() {
                 amount,
                 category
             })
-            .eq("id", editId);
+            .eq("id", editId)
+            .eq("user_id",currentUser.id);
 
         if (error) {
             console.error("Error updating expense:", error);
@@ -44,8 +46,6 @@ addBtn.addEventListener("click", async function() {
         await loadExpenses();
         exitEditMode();
     } else {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-
         const { error } = await supabaseClient
             .from("expenses")
             .insert([
@@ -53,7 +53,7 @@ addBtn.addEventListener("click", async function() {
                     name,
                     amount,
                     category,
-                    user_id: user.id
+                    user_id: currentUser.id
                 }
             
             ]);
@@ -77,7 +77,8 @@ expenseList.addEventListener("click", async function (event) {
         const { error } = await supabaseClient
             .from("expenses")
             .delete()
-            .eq("id", id);
+            .eq("id", id)
+            .eq("user_id",currentUser.id);
 
         if (error) {
             console.error("Error deleting expense:", error);
@@ -115,6 +116,8 @@ filterCategory.addEventListener("change", refresh);
 sortBy.addEventListener("change", refresh);
 
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    currentUser = session?.user ?? null;
+
     updateAuthUI(session?.user ?? null);
 
     await loadExpenses();
@@ -179,9 +182,7 @@ function getDisplayedExpenses() {
 
 // Storage
 async function loadExpenses() {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-
-    if (!user) {
+    if (!currentUser) {
         expenses = [];
         return;
     }
@@ -189,7 +190,7 @@ async function loadExpenses() {
     const { data, error } = await supabaseClient
         .from("expenses")
         .select("*")
-        .eq("user_id", user.id);
+        .eq("user_id", currentUser.id);
 
     if (error) {
         console.error("Error loading expenses:", error);
@@ -295,6 +296,7 @@ async function signOut() {
 
 async function startApp() {
     const { data: { user } } = await supabaseClient.auth.getUser();
+    currentUser = user;
 
     updateAuthUI(user);
 
