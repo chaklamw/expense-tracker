@@ -27,43 +27,75 @@ addBtn.addEventListener("click", async function() {
         return;
     }
 
-    if (editId !== null) {
-        const { error } = await supabaseClient
-            .from("expenses")
-            .update({
-                name,
-                amount,
-                category
-            })
-            .eq("id", editId)
-            .eq("user_id",currentUser.id);
-
-        if (error) {
-            console.error("Error updating expense:", error);
-            return;
-        }
-        
-        await loadExpenses();
-        exitEditMode();
-    } else {
-        const { error } = await supabaseClient
-            .from("expenses")
-            .insert([
-                {
+    if(currentUser) {
+        if (editId !== null) {
+            const { error } = await supabaseClient
+                .from("expenses")
+                .update({
                     name,
                     amount,
-                    category,
-                    user_id: currentUser.id
-                }
+                    category
+                })
+                .eq("id", editId)
+                .eq("user_id",currentUser.id);
+
+            if (error) {
+                console.error("Error updating expense:", error);
+                return;
+            }
             
-            ]);
+            await loadExpenses();
+            exitEditMode();
+        } else {
+            const { error } = await supabaseClient
+                .from("expenses")
+                .insert([
+                    {
+                        name,
+                        amount,
+                        category,
+                        user_id: currentUser.id
+                    }
+                
+                ]);
 
-        if (error) {
-            console.error("Error adding expense:", error);
-            return;
+            if (error) {
+                console.error("Error adding expense:", error);
+                return;
+            }
+
+            await loadExpenses();
         }
+    } else {
+        if (editId !== null) {
+            const index = expenses.findIndex(function (expense) {
+                return expense.id === editId;
+            });
 
-        await loadExpenses();
+            if (index === -1) {
+                return;
+            }
+
+            expenses[index] = {
+                ...expenses[index],
+                name,
+                amount,
+                category,
+            };
+
+            saveExpenses();
+            exitEditMode();
+        } else {
+            expenses.push({
+                id: crypto.randomUUID(),
+                name: name,
+                amount: amount,
+                category: category,
+                createdAt: Date.now()
+            });
+
+            saveExpenses();
+        }
     }
 
     refresh();
@@ -183,7 +215,7 @@ function getDisplayedExpenses() {
 // Storage
 async function loadExpenses() {
     if (!currentUser) {
-        expenses = [];
+        expenses = JSON.parse(localStorage.getItem("expenses")) ?? [];
         return;
     }
 
@@ -206,6 +238,10 @@ async function loadExpenses() {
             createdAt: new Date(expense.created_at).getTime()
         };
     });
+}
+
+function saveExpenses() {
+    localStorage.setItem("expenses", JSON.stringify(expenses));
 }
 
 // Rendering
@@ -267,7 +303,7 @@ function updateAuthUI(user) {
         authBtn.textContent = "Sign Out";
         authBtn.onclick = signOut;
     } else {
-        userName.textContent = "You are on Demo Mode!";
+        userName.textContent = "You are on Guest Mode! Changes will not sync until you sign in.";
         authBtn.textContent = "Sign in with Google"
         authBtn.onclick = signIn;
         exitEditMode();
