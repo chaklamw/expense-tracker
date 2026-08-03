@@ -106,17 +106,26 @@ expenseList.addEventListener("click", async function (event) {
     const id = event.target.dataset.id
 
     if (event.target.classList.contains("delete-btn")) {
-        const { error } = await supabaseClient
-            .from("expenses")
-            .delete()
-            .eq("id", id)
-            .eq("user_id",currentUser.id);
+        if (currentUser) {
+            const { error } = await supabaseClient
+                .from("expenses")
+                .delete()
+                .eq("id", id)
+                .eq("user_id",currentUser.id);
 
-        if (error) {
-            console.error("Error deleting expense:", error);
+            if (error) {
+                console.error("Error deleting expense:", error);
+                return;
+            }
+
+            await loadExpenses();
+        } else {
+            expenses = expenses.filter(function (expense) {
+                return expense.id !== id;
+            });
+
+            saveExpenses();
         }
-
-        await loadExpenses();
     }
 
     if (event.target.classList.contains("edit-btn")) {
@@ -303,7 +312,7 @@ function updateAuthUI(user) {
         authBtn.textContent = "Sign Out";
         authBtn.onclick = signOut;
     } else {
-        userName.textContent = "You are on Guest Mode! Changes will not sync until you sign in.";
+        userName.textContent = "You are on Guest Mode! Changes are not saved to the cloud until you sign in.";
         authBtn.textContent = "Sign in with Google"
         authBtn.onclick = signIn;
         exitEditMode();
