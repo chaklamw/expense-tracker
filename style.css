@@ -14,6 +14,33 @@ body {
     align-items: center;
 }
 
+.layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.layout::before {
+    content: "";
+    width: 260px;
+    flex-shrink: 0;
+}
+
+.sidebar {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 260px;
+    flex-shrink: 0;
+}
+
+.sidebar .control-row {
+    gap: 20px;
+}
+
 .container {
     background: white;
     padding: 25px;
@@ -132,6 +159,7 @@ button {
 
 .control-row select {
     flex: 1;
+    min-width: 0;
 }
 
 .control-group {
@@ -159,6 +187,22 @@ button {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.date-filter-group {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-filter-group input[type="date"] {
+    width: 100%;
+    min-width: 0;
+}
+
+.date-filter-group button {
+    grid-column: 1 / -1;
 }
 
 #auth-container {

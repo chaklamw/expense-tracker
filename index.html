@@ -15,70 +15,85 @@
         <span id="user-name"></span>
         <button id="auth-btn">Sign in with Google</button>
     </div>
-    <div class="container">
-        <h1>Expense Tracker</h1>
+    <div class="layout">
+        <div class="container">
+            <h1>Expense Tracker</h1>
 
-        <div class="expense-form">
-            <input type="text" id="expense-name" placeholder="Expense Name">
+            <div class="expense-form">
+                <input type="text" id="expense-name" placeholder="Expense Name">
 
-            <input type="number" id="expense-amount" placeholder="Amount">
+                <input type="number" id="expense-amount" placeholder="Amount">
 
-            <select id="expense-category">
-                <option value="">Select Category</option>
-                <option value="food">Food</option>
-                <option value="transportation">Transportation</option>
-                <option value="entertainment">Entertainment</option>
-                <option value="bills">Bills</option>
-                <option value="other">Other</option>
-            </select>
-
-            <input type="date" id="expense-date">
-
-            <div class="button-row">
-                <button id="add-btn">Add Expense</button>
-                <button id="cancel-btn" hidden>Discard Changes</button>
-            </div>
-        </div>
-
-        <h2>Total: $<span id="total">0</span></h2>
-
-        <div class="control-row">
-            <div class="control-group">
-                <label for="sort-by">Sort By: </label>
-                <select id="sort-by">
-                    <option value="newest">Newest Added</option>
-                    <option value="oldest">Oldest Added</option>
-                    <option value="expense-newest">Expense Date (Newest)</option>
-                    <option value="expense-oldest">Expense Date (oldest)</option>
-                    <option value="a-z">A-Z</option>
-                    <option value="z-a">Z-A</option>
-                    <option value="highest">Highest</option>
-                    <option value="lowest">Lowest</option>
+                <select id="expense-category">
+                    <option value="">Select Category</option>
+                    <option value="food">Food</option>
+                    <option value="transportation">Transportation</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="bills">Bills</option>
+                    <option value="other">Other</option>
                 </select>
+
+                <input type="date" id="expense-date">
+
+                <div class="button-row">
+                    <button id="add-btn">Add Expense</button>
+                    <button id="cancel-btn" hidden>Discard Changes</button>
+                </div>
             </div>
-            
-            <div class="control-group filter-group">
-                <label for="filter-category">Filter: </label>
-                    <div class="filter-categories">
-                        <label>
-                            <input type="checkbox" value="food">Food
-                        </label>
-                        <label>
-                            <input type="checkbox" value="transportation">Transportation
-                        </label>
-                        <label>
-                            <input type="checkbox" value="entertainment">Entertainment
-                        </label>
-                        <label>
-                            <input type="checkbox" value="bills">Bills
-                        </label>
-                        <label>
-                            <input type="checkbox" value="other">Other
-                        </label>
-                    </div>
-            </div>
+
+            <h2>Total: $<span id="total">0</span></h2>
+
+            <ul id="expense-list"></ul>
         </div>
-        <ul id="expense-list"></ul>
+
+        <aside class="sidebar">
+            <div class="control-row">
+                <div class="control-group">
+                    <label for="sort-by">Sort By: </label>
+                    <select id="sort-by">
+                        <option value="newest">Newest Added</option>
+                        <option value="oldest">Oldest Added</option>
+                        <option value="expense-newest">Expense Date (Newest)</option>
+                        <option value="expense-oldest">Expense Date (oldest)</option>
+                        <option value="a-z">A-Z</option>
+                        <option value="z-a">Z-A</option>
+                        <option value="highest">Highest</option>
+                        <option value="lowest">Lowest</option>
+                    </select>
+                </div>
+
+                <div class="control-group filter-group">
+                    <label for="filter-category">Filter: </label>
+                        <div class="filter-categories">
+                            <label>
+                                <input type="checkbox" value="food">Food
+                            </label>
+                            <label>
+                                <input type="checkbox" value="transportation">Transportation
+                            </label>
+                            <label>
+                                <input type="checkbox" value="entertainment">Entertainment
+                            </label>
+                            <label>
+                                <input type="checkbox" value="bills">Bills
+                            </label>
+                            <label>
+                                <input type="checkbox" value="other">Other
+                            </label>
+                        </div>
+                </div>
+
+                <div class="control-group date-filter-group">
+                    <label for="filter-date-start">From: </label>
+                    <input type="date" id="filter-date-start">
+
+                    <label for="filter-date-end">To: </label>
+                    <input type="date" id="filter-date-end">
+
+                    <button id="clear-dates-btn">Clear</button>
+                </div>
+            </div>
+        </aside>
     </div>
     </div>
     
