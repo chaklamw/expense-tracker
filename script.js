@@ -22,6 +22,7 @@ addBtn.addEventListener("click", async function() {
     const name = expenseName.value.trim();
     const amount = Number(expenseAmount.value);
     const category = expenseCategory.value;
+    const date = expenseDate.value;
 
     if (name === "" || amount <= 0 || category === "") {
         alert("Please fill out all fields correctly.");
@@ -82,6 +83,7 @@ addBtn.addEventListener("click", async function() {
                 name,
                 amount,
                 category,
+                expenseDate: expenseDate.value
             };
 
             saveExpenses();
@@ -92,6 +94,7 @@ addBtn.addEventListener("click", async function() {
                 name: name,
                 amount: amount,
                 category: category,
+                expenseDate: date,
                 createdAt: Date.now()
             });
 
@@ -141,6 +144,7 @@ expenseList.addEventListener("click", async function (event) {
         expenseName.value = expense.name;
         expenseAmount.value = expense.amount;
         expenseCategory.value = expense.category;
+        expenseDate.value = expense.expenseDate;
 
         enterEditMode(id);
     }
@@ -305,11 +309,18 @@ function renderExpenses() {
             li.classList.add("editing");
         }
 
+        const [year, month, day] = expense.expenseDate.split("-");
+
         const displayCategory = expense.category.charAt(0).toUpperCase() + expense.category.slice(1);
+        const displayDate = new Date(year, month - 1, day).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+        });
 
         li.innerHTML = 
             `<span>
-                ${expense.name} - $${expense.amount} (${displayCategory})
+                ${expense.name} - $${expense.amount} (${displayCategory}) - ${displayDate}
             </span>
             <div class="button-group">
                 <button class="edit-btn" data-id="${expense.id}">EDIT</button>
