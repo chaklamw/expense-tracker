@@ -159,7 +159,11 @@ sortBy.addEventListener("change", refresh);
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
     currentUser = session?.user ?? null;
 
-    updateAuthUI(session?.user ?? null);
+    if (currentUser && event === "SIGNED_IN") {
+        syncGuestExpenses();
+    }
+
+    updateAuthUI(currentUser);
 
     await loadExpenses();
     refresh();
@@ -251,6 +255,30 @@ async function loadExpenses() {
 
 function saveExpenses() {
     localStorage.setItem("expenses", JSON.stringify(expenses));
+}
+
+async function syncGuestExpenses() {
+    const guestExpenses = JSON.parse(localStorage.getItem("expenses")) ?? [];
+
+    if (guestExpenses.length === 0) {
+        return;
+    }
+
+    const expensesToInsert = guestExpenses.map(function (expense) {
+        return {
+            name: expense.name,
+            amount: expense.amount,
+            category: expense.category,
+            user_id: currentUser.id,
+            created_at: new Date(expense.createdAt).toISOString()
+        }
+    });
+
+    const { error } = await supabaseClient
+        .from("expenses")
+        .insert(expensesToInsert);
+    
+    localStorage.removeItem("expenses");
 }
 
 // Rendering
