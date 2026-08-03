@@ -8,7 +8,8 @@ const cancelBtn = document.getElementById("cancel-btn");
 const expenseList = document.getElementById("expense-list");
 const totalDisplay = document.getElementById("total");
 const sortBy = document.getElementById("sort-by");
-const filterCategory = document.getElementById("filter-category");
+const filterCategoryContainer = document.querySelector(".filter-categories");
+const filterCheckboxes = document.querySelectorAll(".filter-categories input[type='checkbox']");
 const authBtn = document.getElementById("auth-btn"); 
 const userName = document.getElementById("user-name")
 
@@ -157,7 +158,7 @@ cancelBtn.addEventListener("click", function () {
     refresh();
 });
 
-filterCategory.addEventListener("change", refresh);
+filterCategoryContainer.addEventListener("change", refresh);
 
 sortBy.addEventListener("change", refresh);
 
@@ -191,12 +192,18 @@ function exitEditMode() {
 function getDisplayedExpenses() {
     let displayedExpenses = [...expenses];
 
-    const category = filterCategory.value;
-
-    if (category !== "all") {
-        displayedExpenses = displayedExpenses.filter(function (expense) {
-            return expense.category === category;
+    const checkedCategories = Array.from(filterCheckboxes)
+        .filter(function (checkbox) {
+            return checkbox.checked;
         })
+        .map(function (checkbox) {
+            return checkbox.value;
+        });
+
+    if (checkedCategories.length > 0) {
+        displayedExpenses = displayedExpenses.filter(function (expense) {
+            return checkedCategories.includes(expense.category);
+        });
     }
 
     const sort = sortBy.value;

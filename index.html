@@ -57,16 +57,25 @@
                 </select>
             </div>
             
-            <div class="control-group">
+            <div class="control-group filter-group">
                 <label for="filter-category">Filter: </label>
-                <select id="filter-category">
-                    <option value="all">All</option>
-                    <option value="food">Food</option>
-                    <option value="transportation">Transportation</option>
-                    <option value="entertainment">Entertainment</option>
-                    <option value="bills">Bills</option>
-                    <option value="other">Other</option>
-                </select>
+                    <div class="filter-categories">
+                        <label>
+                            <input type="checkbox" value="food">Food
+                        </label>
+                        <label>
+                            <input type="checkbox" value="transportation">Transportation
+                        </label>
+                        <label>
+                            <input type="checkbox" value="entertainment">Entertainment
+                        </label>
+                        <label>
+                            <input type="checkbox" value="bills">Bills
+                        </label>
+                        <label>
+                            <input type="checkbox" value="other">Other
+                        </label>
+                    </div>
             </div>
         </div>
         <ul id="expense-list"></ul>
