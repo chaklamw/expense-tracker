@@ -225,6 +225,14 @@ function getDisplayedExpenses() {
         displayedExpenses.sort(function (a,b) {
             return a.amount - b.amount;
         });
+    } else if (sort === "expense-newest") {
+        displayedExpenses.sort(function (a,b) {
+            return new Date(b.expenseDate) - new Date(a.expenseDate);
+        });
+    } else if (sort === "expense-oldest") {
+        displayedExpenses.sort(function (a,b) {
+            return new Date(a.expenseDate) - new Date(b.expenseDate);
+        });
     }
 
     return displayedExpenses;
