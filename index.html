@@ -16,6 +16,13 @@
         <button id="auth-btn">Sign in with Google</button>
     </div>
     <div class="layout">
+        <aside class="side-panel chart-panel">
+            <h2 class="panel-title">Spending by Category</h2>
+            <svg id="category-chart" viewBox="0 0 200 200" width="200" height="200"></svg>
+            <p id="chart-empty-message" hidden>No expenses to show yet.</p>
+            <ul id="chart-legend"></ul>
+        </aside>
+        
         <div class="container">
             <h1>Expense Tracker</h1>
 
@@ -46,7 +53,7 @@
             <ul id="expense-list"></ul>
         </div>
 
-        <aside class="sidebar">
+        <aside class="side-panel sidebar">
             <div class="control-row">
                 <div class="control-group">
                     <label for="sort-by">Sort By: </label>

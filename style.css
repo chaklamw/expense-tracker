@@ -22,19 +22,21 @@ body {
     width: 100%;
 }
 
-.layout::before {
-    content: "";
-    width: 260px;
-    flex-shrink: 0;
-}
-
-.sidebar {
+.side-panel {
     background: white;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     width: 260px;
     flex-shrink: 0;
+}
+
+.chart-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
 }
 
 .sidebar .control-row {
