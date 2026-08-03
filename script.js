@@ -2,6 +2,7 @@
 const expenseName = document.getElementById("expense-name");
 const expenseAmount = document.getElementById("expense-amount");
 const expenseCategory = document.getElementById("expense-category");
+const expenseDate = document.getElementById("expense-date");
 const addBtn = document.getElementById("add-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 const expenseList = document.getElementById("expense-list");
@@ -160,7 +161,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
     currentUser = session?.user ?? null;
 
     if (currentUser && event === "SIGNED_IN") {
-        syncGuestExpenses();
+        await syncGuestExpenses();
     }
 
     updateAuthUI(currentUser);
@@ -286,6 +287,7 @@ function clearForm() {
     expenseName.value = "";
     expenseAmount.value = "";
     expenseCategory.value = "";
+    expenseDate.value = new Date().toISOString().split("T")[0];
 }
 
 function renderExpenses() {
@@ -335,6 +337,9 @@ function refresh() {
 }
 
 function updateAuthUI(user) {
+    exitEditMode();
+    clearForm();
+
     if (user) {
         userName.textContent = "Welcome " + user.user_metadata.full_name + "!";
         authBtn.textContent = "Sign Out";
@@ -343,8 +348,6 @@ function updateAuthUI(user) {
         userName.textContent = "You are on Guest Mode! Changes are not saved to the cloud until you sign in.";
         authBtn.textContent = "Sign in with Google"
         authBtn.onclick = signIn;
-        exitEditMode();
-        clearForm();
     }
 }
 
