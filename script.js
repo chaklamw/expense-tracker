@@ -10,6 +10,9 @@ const totalDisplay = document.getElementById("total");
 const sortBy = document.getElementById("sort-by");
 const filterCategoryContainer = document.querySelector(".filter-categories");
 const filterCheckboxes = document.querySelectorAll(".filter-categories input[type='checkbox']");
+const filterDateStart = document.getElementById("filter-date-start");
+const filterDateEnd = document.getElementById("filter-date-end");
+const clearDatesBtn = document.getElementById("clear-dates-btn");
 const authBtn = document.getElementById("auth-btn"); 
 const userName = document.getElementById("user-name")
 
@@ -37,7 +40,8 @@ addBtn.addEventListener("click", async function() {
                 .update({
                     name,
                     amount,
-                    category
+                    category,
+                    expense_date: date
                 })
                 .eq("id", editId)
                 .eq("user_id",currentUser.id);
@@ -57,6 +61,7 @@ addBtn.addEventListener("click", async function() {
                         name,
                         amount,
                         category,
+                        expense_date: date,
                         user_id: currentUser.id
                     }
                 
@@ -160,6 +165,15 @@ cancelBtn.addEventListener("click", function () {
 
 filterCategoryContainer.addEventListener("change", refresh);
 
+filterDateStart.addEventListener("change", refresh);
+filterDateEnd.addEventListener("change", refresh);
+
+clearDatesBtn.addEventListener("click", function () {
+    filterDateStart.value = "";
+    filterDateEnd.value = "";
+    refresh();
+});
+
 sortBy.addEventListener("change", refresh);
 
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
@@ -203,6 +217,21 @@ function getDisplayedExpenses() {
     if (checkedCategories.length > 0) {
         displayedExpenses = displayedExpenses.filter(function (expense) {
             return checkedCategories.includes(expense.category);
+        });
+    }
+
+    const startDate = filterDateStart.value;
+    const endDate = filterDateEnd.value;
+
+    if (startDate) {
+        displayedExpenses = displayedExpenses.filter(function (expense) {
+            return expense.expenseDate >= startDate;
+        });
+    }
+
+    if (endDate) {
+        displayedExpenses = displayedExpenses.filter(function (expense) {
+            return expense.expenseDate <= endDate;
         });
     }
 
@@ -268,6 +297,7 @@ async function loadExpenses() {
             name: expense.name,
             amount: expense.amount,
             category: expense.category,
+            expenseDate: expense.expense_date,
             createdAt: new Date(expense.created_at).getTime()
         };
     });
@@ -289,6 +319,7 @@ async function syncGuestExpenses() {
             name: expense.name,
             amount: expense.amount,
             category: expense.category,
+            expense_date: expense.expenseDate,
             user_id: currentUser.id,
             created_at: new Date(expense.createdAt).toISOString()
         }
