@@ -530,7 +530,10 @@ function renderLegend() {
 // Authentication
 async function signIn() {
     const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: "google"
+        provider: "google",
+        options: {
+            redirectTo: window.location.origin + window.location.pathname
+        }
     });
 
     if (error) {
