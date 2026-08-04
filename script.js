@@ -14,7 +14,19 @@ const filterDateStart = document.getElementById("filter-date-start");
 const filterDateEnd = document.getElementById("filter-date-end");
 const clearDatesBtn = document.getElementById("clear-dates-btn");
 const authBtn = document.getElementById("auth-btn"); 
-const userName = document.getElementById("user-name")
+const userName = document.getElementById("user-name");
+
+const categoryChart = document.getElementById("category-chart");
+const chartLegend = document.getElementById("chart-legend");
+const chartEmptyMessage = document.getElementById("chart-empty-message");
+
+const categoryColors = {
+    food: "#4a90e2",
+    transportation: "#f5a623",
+    entertainment: "#7ed321",
+    bills: "#d0021b",
+    other: "#9013fe"
+};
 
 // App State
 let expenses = [];
@@ -274,6 +286,18 @@ function getDisplayedExpenses() {
     return displayedExpenses;
 }
 
+function getCategoryTotals() {
+    const displayedExpenses = getDisplayedExpenses();
+
+    const totals = {};
+
+    displayedExpenses.forEach(function (expense) {
+        totals[expense.category] = (totals[expense.category] || 0) + expense.amount;
+    });
+
+    return totals;
+}
+
 // Storage
 async function loadExpenses() {
     if (!currentUser) {
@@ -391,6 +415,8 @@ function updateTotal() {
 function refresh() {
     renderExpenses();
     updateTotal();
+    renderChart();
+    renderLegend();
 }
 
 function updateAuthUI(user) {
@@ -406,6 +432,99 @@ function updateAuthUI(user) {
         authBtn.textContent = "Sign in with Google"
         authBtn.onclick = signIn;
     }
+}
+
+function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+    const angleInRadians = (angleInDegrees - 90) * Math.PI / 180;
+
+    return {
+        x: centerX + radius * Math.cos(angleInRadians),
+        y: centerY + radius * Math.sin(angleInRadians)
+    };
+}
+
+function describeSlice(centerX, centerY, radius, startAngle, endAngle) {
+    const start = polarToCartesian(centerX, centerY, radius, endAngle);
+    const end = polarToCartesian(centerX, centerY, radius, startAngle);
+
+    const largeArcFlag = (endAngle - startAngle) > 180 ? 1 : 0;
+
+    return [
+        "M", centerX, centerY,
+        "L", start.x, start.y,
+        "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y,
+        "Z"
+    ].join(" ");
+}
+
+function renderChart() {
+    const totals = getCategoryTotals();
+    const categories = Object.keys(totals);
+    const chartTotal = categories.reduce(function (sum, category) {
+        return sum + totals[category];
+    }, 0);
+
+    categoryChart.innerHTML = "";
+
+    if (chartTotal === 0) {
+        chartEmptyMessage.hidden = false;
+        categoryChart.hidden = true;
+        return;
+    }
+
+    chartEmptyMessage.hidden = true;
+    categoryChart.hidden = false;
+
+    if (categories.length === 1) {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", 100);
+        circle.setAttribute("cy", 100);
+        circle.setAttribute("r", 90);
+        circle.setAttribute("fill", categoryColors[categories[0]]);
+
+        categoryChart.appendChild(circle);
+        return;
+    }
+
+    let startAngle = 0;
+
+    categories.forEach(function (category) {
+        const amount = totals[category];
+        const sweep = (amount / chartTotal) * 360;
+        const endAngle = startAngle + sweep;
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", describeSlice(100, 100, 90, startAngle, endAngle));
+        path.setAttribute("fill", categoryColors[category]);
+
+        categoryChart.appendChild(path);
+
+        startAngle = endAngle;
+    });
+}
+
+function renderLegend() {
+    const totals = getCategoryTotals();
+    const categories = Object.keys(totals);
+    const chartTotal = categories.reduce(function (sum, category) {
+        return sum + totals[category];
+    }, 0);
+
+    chartLegend.innerHTML = "";
+
+    categories.forEach(function (category) {
+        const amount = totals[category];
+        const percentage = ((amount / chartTotal) * 100).toFixed(1);
+        const displayCategory = category.charAt(0).toUpperCase() + category.slice(1);
+
+        const li = document.createElement("li");
+
+        li.innerHTML =
+            `<span class="legend-swatch" style="background:${categoryColors[category]}"></span>
+            <span>${displayCategory} - $${amount.toFixed(2)} (${percentage}%)</span>`;
+
+        chartLegend.appendChild(li);
+    });
 }
 
 // Authentication
