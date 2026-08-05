@@ -31,16 +31,71 @@ body {
     flex-shrink: 0;
 }
 
+.side-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar .control-row {
+    gap: 20px;
+}
+
+.export-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
 .chart-panel {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    text-align: center;
 }
 
-.sidebar .control-row {
-    gap: 20px;
+.panel-title {
+    font-size: 18px;
+    text-align: center;
+    margin: 0;
+}
+
+#category-chart {
+    max-width: 100%;
+}
+
+#chart-empty-message {
+    color: #888;
+    font-size: 14px;
+    text-align: center;
+    margin: 0;
+}
+
+#chart-legend {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+}
+
+#chart-legend li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    display: inline-block;
 }
 
 .container {

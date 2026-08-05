@@ -15,6 +15,7 @@ const filterDateEnd = document.getElementById("filter-date-end");
 const clearDatesBtn = document.getElementById("clear-dates-btn");
 const authBtn = document.getElementById("auth-btn"); 
 const userName = document.getElementById("user-name");
+const exportCsvBtn = document.getElementById("export-csv-btn");
 
 const categoryChart = document.getElementById("category-chart");
 const chartLegend = document.getElementById("chart-legend");
@@ -185,6 +186,8 @@ clearDatesBtn.addEventListener("click", function () {
     filterDateEnd.value = "";
     refresh();
 });
+
+exportCsvBtn.addEventListener("click", exportExpensesToCsv);
 
 sortBy.addEventListener("change", refresh);
 
@@ -379,14 +382,18 @@ function renderExpenses() {
             li.classList.add("editing");
         }
 
-        const [year, month, day] = expense.expenseDate.split("-");
+        let displayDate = "No date";
+
+        if (expense.expenseDate) {
+            const [year, month, day] = expense.expenseDate.split("-");
+            displayDate = new Date(year, month - 1, day).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+            });
+        }
 
         const displayCategory = expense.category.charAt(0).toUpperCase() + expense.category.slice(1);
-        const displayDate = new Date(year, month - 1, day).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric"
-        });
 
         li.innerHTML = 
             `<span>
@@ -525,6 +532,58 @@ function renderLegend() {
 
         chartLegend.appendChild(li);
     });
+}
+
+// Export
+function escapeCsvValue(value) {
+    const stringValue = String(value);
+
+    if (stringValue.includes(",") || stringValue.includes("\"") || stringValue.includes("\n")) {
+        return `"${stringValue.replace(/"/g, "\"\"")}"`;
+    }
+
+    return stringValue;
+}
+
+function buildCsv(expensesToExport) {
+    const header = ["Name", "Amount", "Category", "Date"];
+
+    const rows = expensesToExport.map(function (expense) {
+        return [
+            expense.name,
+            expense.amount,
+            expense.category,
+            expense.expenseDate || ""
+        ];
+    });
+
+    return [header, ...rows]
+        .map(function (row) {
+            return row.map(escapeCsvValue).join(",");
+        })
+        .join("\n");
+}
+
+function downloadCsv(csvContent, filename) {
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+}
+
+function exportExpensesToCsv() {
+    const displayedExpenses = getDisplayedExpenses();
+    const csvContent = buildCsv(displayedExpenses);
+
+    downloadCsv(csvContent, "expenses.csv");
 }
 
 // Authentication

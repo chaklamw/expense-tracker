@@ -22,7 +22,7 @@
             <p id="chart-empty-message" hidden>No expenses to show yet.</p>
             <ul id="chart-legend"></ul>
         </aside>
-        
+
         <div class="container">
             <h1>Expense Tracker</h1>
 
@@ -53,7 +53,8 @@
             <ul id="expense-list"></ul>
         </div>
 
-        <aside class="side-panel sidebar">
+        <div class="side-column">
+            <aside class="side-panel sidebar">
             <div class="control-row">
                 <div class="control-group">
                     <label for="sort-by">Sort By: </label>
@@ -61,7 +62,7 @@
                         <option value="newest">Newest Added</option>
                         <option value="oldest">Oldest Added</option>
                         <option value="expense-newest">Expense Date (Newest)</option>
-                        <option value="expense-oldest">Expense Date (Oldest)</option>
+                        <option value="expense-oldest">Expense Date (oldest)</option>
                         <option value="a-z">A-Z</option>
                         <option value="z-a">Z-A</option>
                         <option value="highest">Highest</option>
@@ -97,10 +98,16 @@
                     <label for="filter-date-end">To: </label>
                     <input type="date" id="filter-date-end">
 
-                    <button id="clear-dates-btn">Clear Dates</button>
+                    <button id="clear-dates-btn">Clear</button>
                 </div>
             </div>
         </aside>
+
+            <aside class="side-panel export-panel">
+                <h2 class="panel-title">Export</h2>
+                <button id="export-csv-btn">Export CSV</button>
+            </aside>
+        </div>
     </div>
     </div>
     
